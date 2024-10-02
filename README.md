@@ -1,52 +1,37 @@
-##Linked Dataset Profiling Tool
+## Linked Dataset Profiling Tool
 
-The Linked Dataset Profiling tool is an implementation of the approach proposed in [1]. It's main purpose is generating 
-structured profiles of Linked Datasets. A profile in this case representes a graph, consisting of linked datasets, 
-resource instances and topics. The topics are DBpedia categories, which are extracted through a Named Entity 
-Disambiguation process by analysing textual literals from resources. The main steps which are executed from the 
-profiling tool are: 
+The Linked Dataset Profiling tool is an implementation of the approach proposed in [1]. Its main purpose is generating structured profiles of Linked Datasets. A profile in this case represents a graph, consisting of linked datasets, resource instances, and topics. The topics are DBpedia categories, which are extracted through a Named Entity Disambiguation process by analyzing textual literals from resources. The main steps executed by the profiling tool are:
 
 1. Dataset metadata extraction from DataHub
 2. Resource instance extraction 
-3. Entity and topic extraction through NED from extracted resources using NED tools like Spotlight or TagMe!
+3. Entity and topic extraction through NED from extracted resources using NED tools like [Spotlight](http://spotlight.sztaki.hu/) or [TagMe!](http://tagme.di.unipi.it/)
 4. Profile graph construction and topic ranking
 5. Exporting of profiles in JSON format.
 
-The individual steps are explained in detail in [1], here we provide a brief overview of the output from each step. 
-In step (1) the input required from the tool is a dataset id, extracted from DataHub, i.e. lak-dataset 
-(http://datahub.io/dataset/lak-dataset) or a group id of datasets, i.e. lodcloud (http://datahub.io/organization/lodcloud). 
-As an output the LDP tool extracts the metadata from the datasets, such as the SPARQL endpoint, name, maintainer etc., 
-and stores in a directory given by the user. In step (2) LDP extracts resource instances from the given datasets in (1).
- It has the option to sample the extracted resources, based on three sampling strategies: random, weighted and centrality 
- (see [1]). Furthermore, the user can define what percentage of resources he/she wants to extract, i.e. 5,10,...,95% 
- of resources. In step (3) from the extracted resources, the tool performs the NED process by analysing the textual 
- literals of resources. Here, one can define what datatype properties are of interest for the NED process, which can 
- be fed in into the tool during the process. In this step, LDP extracts entities as 
- DBpedia entities, and the topics from the extracted entities through the 
- datatype property dcterms:subject. The last step of the LDP tool, is step (4) where from the extracted datasets 
- and their corresponding sampled resources, and the extracted entities and topics in step (3), 
- we build the dataset topic graph as our profile. The topics are ranked for their relevance to the respective 
- datasets by different graphical models that can be fed into the LDP tool by the user, i.e. prank, kstep, hits, 
- for PageRank with Priors, K-Step Markov and HITS, respecitvely. Finally, after ranking the topics for their 
- relevance, the LDP tool can export the profiles into JSON format, such that they can be further analysed or exported 
- into RDF or other formats. For RDF we provide the tool which exposes the profiles into RDF using the VoID and VoL schema.
+The individual steps are explained in detail in [1]. Here we provide a brief overview of the output from each step. 
 
+1. The input required from the tool is a dataset ID, extracted from DataHub, i.e., [lak-dataset]([http://datahub.io/dataset/lak-dataset](http://datahub.io/dataset/lak-dataset)) or a group ID of datasets, i.e., [lodcloud]([http://datahub.io/organization/lodcloud](http://datahub.io/organization/lodcloud)). 
 
-In order to run the LDP tool, it requires few variables to be added in its config file. We show here the possible input values for the different variables (where with "|" we show all acceptable and recognisable values by the tool), wheres for others we provide a simple textual description. See below for the sample config file. The defined variables and values should be stored in a separate file and should be given as an inline argument to the LDP tool, e.g. 
+   As an output, the LDP tool extracts the metadata from the datasets, such as the SPARQL endpoint, name, maintainer, etc., and stores it in a directory given by the user. 
+
+2. LDP extracts resource instances from the given datasets in (1). It has the option to sample the extracted resources based on three sampling strategies: random, weighted, and centrality (see [1]). Furthermore, the user can define what percentage of resources he/she wants to extract, i.e., 5, 10,..., 95% of resources. 
+
+3. From the extracted resources, the tool performs the NED process by analyzing the textual literals of resources. Here, one can define what datatype properties are of interest for the NED process, which can be fed into the tool during the process. In this step, LDP extracts entities as DBpedia entities and the topics from the extracted entities through the datatype property `dcterms:subject`. The last step of the LDP tool
+4. Building the dataset topic graph as our profile from the extracted datasets and their corresponding sampled resources, and the extracted entities and topics in step (3). The topics are ranked for their relevance to the respective datasets by different graphical models that can be fed into the LDP tool by the user, i.e., prank, kstep, hits, for PageRank with Priors, K-Step Markov, and HITS, respectively. Finally, after ranking the topics for their relevance, the LDP tool can export the profiles into JSON format, such that they can be further analyzed or exported into RDF or other formats. For RDF, we provide the tool which exposes the profiles into RDF using the VoID and VoL schema.
+
+In order to run the LDP tool, it requires a few variables to be added to its config file. We show here the possible input values for the different variables (where with "|" we show all acceptable and recognizable values by the tool), whereas for others we provide a simple textual description. See below for the sample config file. The defined variables and values should be stored in a separate file and should be given as an inline argument to the LDP tool, e.g., 
 
 ```java
 java -jar ldp.jar config.ini
 ```
 
-###Example config values
-=========================
+## Example config values
 
-Only one value at at time, 0 - is for step (1), 1 for step (2), and so on
+Only one value at a time, 0 - is for step (1), 1 for step (2), and so on
 
 ```java
 loadcase=0|1|2|3|4
 ```
-
 
 An existing directory where the extracted datasets and resources will be stored
 
@@ -54,27 +39,23 @@ An existing directory where the extracted datasets and resources will be stored
 datasetpath=directory location
 ```
 
-
-Path and the name of the file which will hold the computed values for the normalised topic relevance score computed as in (1)
+Path and the name of the file which will hold the computed values for the normalized topic relevance score computed as in (1)
 
 ```java
 normalised_topic_score=file location
 ```
 
-
-Path and the name of the file which will hold the extracted de.l3s.bfetahu.ldp.entities and topics from DBpedia
+Path and the name of the file which will hold the extracted `de.l3s.bfetahu.ldp.entities` and topics from DBpedia
 
 ```java
 annotationindex=file location
 ```
 
-
-Sample size, which defines the ratio of extracted resources for a dataset. Be aware here that Step (3) for large sample sizes takes a long time, and as shown in [1] a sample size of 10% is representative
+Sample size, which defines the ratio of extracted resources for a dataset. Be aware here that Step (3) for large sample sizes takes a long time, and as shown in [1], a sample size of 10% is representative
 
 ```java
 sample_size=1|2|...|95
 ```
-
 
 Sampling strategy to extract the resources, 'centrality' performs best in terms of profiling accuracy
 
@@ -82,13 +63,11 @@ Sampling strategy to extract the resources, 'centrality' performs best in terms 
 sampling_type=random|weighted|centrality
 ```
 
-
 Path to an existing directory for the output directory location
 
 ```java
 outdir=directory location
 ```
-
 
 Path to an existing directory for the output generated by the different topic ranking approaches
 
@@ -96,20 +75,17 @@ Path to an existing directory for the output generated by the different topic ra
 topic_ranking_objects=directory location
 ```
 
-
-Dataset id or group id from datahub for which you want to perform the profiling
+Dataset ID or group ID from DataHub for which you want to perform the profiling
 
 ```java
 query_str=datahub_dataset_id|datahub_group_id
 ```
 
-
-In case you are looking for a dataset id, then the value here should be false, and vice versa
+In case you are looking for a dataset ID, then the value here should be false, and vice versa
 
 ```java
 is_dataset_group_search=true|false
 ```
-
 
 Topic ranking approaches in Step (4), which determines the relevance of topics for a dataset
 
@@ -117,13 +93,11 @@ Topic ranking approaches in Step (4), which determines the relevance of topics f
 topic_ranking_strategies=prank|kstep|hits
 ```
 
-
 Path to a file containing datatype properties of interest for the NED process. Here the datatype properties should be one per line and their object values should be textual literals
 
 ```java
 property_lookup=file location of properties of interest which need to be considered for NED analysis
 ```
- 
 
 Location where to store the generated dataset topic graphs
 
@@ -131,67 +105,59 @@ Location where to store the generated dataset topic graphs
 raw_graph_dir=directory location 
 ```
 
-
-Define which NED process to use. Spotlight doesn't require any changes, while for TagMe! one needs to get the API credenitals (contact at http://tagme.di.unipi.it/) and provide it under the tagme_api_key
+Define which NED process to use. Spotlight doesn't require any changes, while for TagMe! one needs to get the API credentials (contact at [http://tagme.di.unipi.it/](http://tagme.di.unipi.it/)) and provide it under the `tagme_api_key`
 
 ```java
 ned_operation=tagme|spotlight 
 ```
 
-In case the NED process is carried out by TagMe! NED tool, then you have to request an API KEY at http://tagme.di.unipi.it/ and provide the key as the value for the variable.
+In case the NED process is carried out by the TagMe! NED tool, then you have to request an API KEY at [http://tagme.di.unipi.it/](http://tagme.di.unipi.it/) and provide the key as the value for the variable.
 
 ```java
 tagme_api_key=TagMe! API KEY
 ```
 
-DBpedia sparql endpoints in different languages
+DBpedia SPARQL endpoints in different languages
 
 ```java
 dbpedia_endpoint=en	http://dbpedia.org/sparql,de	http://de.dbpedia.org/live/sparql 
 ```
 
-
-This has to be set to true as it checks for the extracted de.l3s.bfetahu.ldp.entities whether their corresponding topics (categories) are extracted
+This has to be set to true as it checks for the extracted `de.l3s.bfetahu.ldp.entities` whether their corresponding topics (categories) are extracted
 
 ```java
 load_entity_categories=true 
 ```
 
-
-URL for the english DBpedia used for the extraction of entity categories
+URL for the English DBpedia used for the extraction of entity categories
 
 ```java
 dbpedia_url=http://dbpedia.org/sparql 
 ```
 
-
-Timeout (in seconds) when extracting resources from the data sets
+Timeout (in seconds) when extracting resources from the datasets
 
 ```java
 timeout=10000 
 ```
 
-
-Define whether the de.l3s.bfetahu.ldp.entities should be included in the profiles or should be left out of the ranking process
+Define whether the `de.l3s.bfetahu.ldp.entities` should be included in the profiles or should be left out of the ranking process
 
 ```java
 includeEntities=false 
 ```
 
-
-File location where the dataset_topic_graph is stored
+File location where the `dataset_topic_graph` is stored
 
 ```java
 dataset_topic_graph=raw_graph/dataset_topic_graph.obj
 ```
 
-
-Values used to initialise the KStep and PageRank models
+Values used to initialize the KStep and PageRank models
 
 ```java
 alpha=0.1
 ```
-
 
 K value for K-Step Markov
 
@@ -199,13 +165,12 @@ K value for K-Step Markov
 k_steps=3 
 ```
 
-
 Number of iterations used for the ranking of topics with K-Step Markov and PageRank with Priors
 
 ```java
 ranking_iterations=10
 ```
 
-The code and the tool is provided under the GNU GENERAL PUBLIC LICENSE. When using the LDP tool please cite the paper in [1]. For additional information, refer to the website: http://data-observatory.org/lod-profiles/about.html.
+The code and the tool are provided under the GNU GENERAL PUBLIC LICENSE. When using the LDP tool, please cite the paper in [1]. For additional information, refer to this [website](http://data-observatory.org/lod-profiles/about.html).
 
 [1] Besnik Fetahu, Stefan Dietze, Bernardo Pereira Nunes, Marco Antonio Casanova, Davide Taibi, Wolfgang Nejdl: **A Scalable Approach for Efficiently Generating Structured Dataset Topic Profiles**. ESWC 2014: 519-53
